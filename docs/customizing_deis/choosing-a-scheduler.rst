@@ -122,6 +122,8 @@ an error forces a rollback to the previous release).
       Kubernetes units.
     - Kubernetes implements resource-based scheduling. Specifying limits will create a reservation
       of that resource on the node.
+    - When changing schedulers from k8s to another, the etcd keys in ``/registry/services/specs``
+      will have to be removed before apps can be routed.
 
 .. _mesos_scheduler:
 

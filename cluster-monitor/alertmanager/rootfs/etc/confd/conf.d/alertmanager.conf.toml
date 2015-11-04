@@ -1,0 +1,10 @@
+[template]
+src   = "alertmanager.yml"
+dest  = "/alertmanager.yml"
+uid = 0
+gid = 0
+mode  = "0644"
+keys = [
+  "/deis/monitor",
+]
+reload_cmd = "does-not-exist-yet.sh"
