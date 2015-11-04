@@ -3,30 +3,34 @@
 global:
   scrape_interval: 15s # By default, scrape targets every 15 seconds.
   evaluation_interval: 15s # By default, scrape targets every 15 seconds.
-  # scrape_timeout is set to the global default (10s).
-
-  # Attach these extra labels to all time-series collected by this Prometheus instance.
   external_labels:
     monitor: 'deis-monitor'
 
 rule_files:
   - '/etc/prometheus/alert.rules'
 
-# A scrape configuration containing exactly one endpoint to scrape:
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-
-  # monitor cadvisor, etcd and controller endpoints
+  # monitor cadvisor, etcd, node exporter and controller endpoints
   - job_name: 'cadvisor'
     scrape_interval: 5s
     scrape_timeout: 10s
     target_groups:
       - targets:
-{{ range gets "/deis/monitor/hosts/*" }}        - {{ base .Key }}:{{ .Value }}{{ end }} # rename key from hosts
+{{ range gets "/deis/monitor/endpoints/cadvisor/*" }}        - {{ base .Key }}:{{ .Value }}
+{{ end }} # rename key from hosts
 
   - job_name: 'etcd'
     scrape_interval: 5s
     scrape_timeout: 10s
     target_groups:
       - targets:
-{{ range gets "/deis/monitor/etcdhosts/*" }}        - {{ base .Key }}:{{ .Value }}{{ end }}
+{{ range gets "/deis/monitor/endpoints/etcd/*" }}        - {{ base .Key }}:{{ .Value }}
+{{ end }}
+
+  - job_name: 'node-exporter'
+    scrape_interval: 5s
+    scrape_timeout: 10s
+    target_groups:
+      - targets:
+{{ range gets "/deis/monitor/endpoints/nodeexporter/*" }}        - {{ base .Key }}:{{ .Value }}
+{{ end }}

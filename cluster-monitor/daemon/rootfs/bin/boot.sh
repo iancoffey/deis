@@ -38,14 +38,14 @@ SERVICE_PID=$!
 echo $SERVICE_PID > /var/spool/prometheus.pid
 echo "monitor: monitor has been started in background with pid: ${SERVICE_PID}"
 
-# @fixme: hax. this probably shouldnt be here.
-echo "monitor: updating etcd node list in etcd"
+# @fixme: hax. how else can we accomplish this?.
+echo "monitor: updating etcd node list in... etcd"
 while true; do
   for uri in $(etcdctl -C "$ETCD" member list | awk '{print $4}' | awk -F= '{print $2}' | awk -F, '{print $1}'); do
     host=$(echo $uri | awk -F: '{print $2}')
     port=$(echo $uri | awk -F: '{print $3}')
-    if ! etcdctl -C "$ETCD" get /deis/monitor/etcdhosts/$host; then
-      etcdctl  -C "$ETCD" set /deis/monitor/etcdhosts/$host $port
+    if ! etcdctl -C "$ETCD" get /deis/monitor/endpoints/etcd/$host; then
+      etcdctl  -C "$ETCD" set /deis/monitor/endpoints/etcd/$host $port
     fi
   done
   sleep 60
