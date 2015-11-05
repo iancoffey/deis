@@ -1,0 +1,16 @@
+[Unit]
+Description=deis-node-exporter
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=20m
+ExecStartPre=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/node-exporter` && docker history $IMAGE >/dev/null 2>&1 || flock -w 1200 /var/run/lock/node-exporter docker pull $IMAGE"
+ExecStartPre=/bin/sh -c "docker inspect deis-node-exporter >/dev/null 2>&1 && docker rm -f deis-node-exporter >/dev/null 2>&1 || true"
+ExecStartPre=/bin/sh -c "etcdctl set /deis/monitor/endpoints/nodeexporter/COREOS_PRIVATE_IPV4 9100 >/dev/null" # <- fixme hax
+ExecStart=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/node-exporter` && docker run --rm -e HOST=$COREOS_PRIVATE_IPV4 -p 9100:9100 --name=nodeexporter prom/node-exporter:latest # fixme, pin to version at least
+ExecStop=-/usr/bin/docker stop deis-node-exporter
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

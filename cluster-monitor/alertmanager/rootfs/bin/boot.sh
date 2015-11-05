@@ -29,3 +29,5 @@ SERVICE_PID=$!
 echo $SERVICE_PID > /var/spool/alertmanager.pid
 echo "alertmanager: alertmanager has been started in background with pid: ${SERVICE_PID}"
 
+wait
+
