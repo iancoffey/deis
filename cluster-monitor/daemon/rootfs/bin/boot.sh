@@ -15,7 +15,7 @@ until etcdctl --no-sync -C "$ETCD" ls >/dev/null 2>&1; do
 	sleep $((ETCD_TTL/2))  # sleep for half the TTL
 done
 
-until confd -onetime -node "$ETCD" --confdir /app --log-level error; do
+until confd -onetime -node "$ETCD" --confdir /etc/confd --log-level error; do
 	echo "monitor: waiting for confd to write initial templates..."
 	sleep $((ETCD_TTL/2))  # sleep for half the TTL
 done
@@ -44,8 +44,8 @@ while true; do
   for uri in $(etcdctl -C "$ETCD" member list | awk '{print $4}' | awk -F= '{print $2}' | awk -F, '{print $1}'); do
     host=$(echo $uri | awk -F: '{print $2}')
     port=$(echo $uri | awk -F: '{print $3}')
-    if ! etcdctl -C "$ETCD" get /deis/monitor/endpoints/etcd/$host; then
-      etcdctl  -C "$ETCD" set /deis/monitor/endpoints/etcd/$host $port
+    if ! etcdctl -C "$ETCD" get /deis/monitor/endpoints/etcd/$host >/dev/null 2>&1; then
+      etcdctl  -C "$ETCD" set /deis/monitor/endpoints/etcd/$host $port >/dev/null 2>&1;
     fi
   done
   sleep 60

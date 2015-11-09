@@ -56,8 +56,8 @@ push: check-registry
 	docker push $(DAEMON_DEV_IMAGE)
 
 set-image: check-deisctl
-	deisctl config store-admin set image=$(ALERTMANAGER_DEV_IMAGE)
-	deisctl config store-daemon set image=$(DAEMON_DEV_IMAGE)
+	deisctl config monitor-alertmanager set image=$(ALERTMANAGER_DEV_IMAGE)
+	deisctl config monitor-daemon set image=$(DAEMON_DEV_IMAGE)
 
 release:
 #	docker push $(ALERTMANAGER_IMAGE) # fixme: uncomment

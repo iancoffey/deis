@@ -10,7 +10,7 @@ notification_config {
 }
 
 aggregation_rule {
-  repeat_rate_seconds: 60
+  repeat_rate_seconds: 3600
   notification_config_name: "alertmanager_slack"
 }
 {{ end }}
